@@ -1,0 +1,46 @@
+:root {
+  --paper: #f4f1e9;
+  --white: #fffdf8;
+  --ink: #171a16;
+  --muted: #73776d;
+  --line: #d9d7cc;
+  --coral: #ef624f;
+  --lime: #d1f64f;
+  --lime-soft: #e8f8ad;
+  --lime-dark: #759900;
+  --display: Georgia, 'Times New Roman', serif;
+  --sans: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  --mono: 'Courier New', monospace;
+  font: 16px/1.45 var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--paper);
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 3px;
+}

@@ -20,6 +20,15 @@ Backend NestJS con TypeORM y MySQL.
 
 Las contraseñas se guardan como hashes `bcrypt`; los JWT expiran en 15 minutos.
 
+## Logs y errores
+
+El backend crea la carpeta `logs/` automáticamente:
+
+- `logs/app.log`: eventos generales de la aplicación.
+- `logs/errors.log`: excepciones, stack traces y contexto técnico para diagnóstico.
+
+El filtro global de excepciones registra el detalle interno y devuelve mensajes simples al cliente. Los archivos de logs están excluidos de Git y no deben contener contraseñas, tokens ni payloads sensibles.
+
 En desarrollo TypeORM crea y actualiza la tabla `vault_records` automáticamente. En producción `synchronize` queda desactivado y deberán usarse migraciones.
 
 Los campos persistidos para la bóveda son `encryptedPayload`, `salt` e `initializationVector`. El servidor no debe recibir contraseñas maestras ni claves en texto plano.

@@ -101,9 +101,9 @@ jobs:
             set net:max-retries 2;
             set net:timeout 30;
             cd \"$FTP_REMOTE_DIR\";
-            cls -1 node_modules/ 2>/dev/null | head -1;
+            cls -1;
             quit
-          ")
+          " 2>/dev/null | grep -E '^node_modules/?$' || true)
 
           if [ -z "$NODE_MODULES_EXISTS" ]; then
             echo "::warning::node_modules.zip quedó en el servidor. Extraelo manualmente dentro de la carpeta de la API y reinicia la aplicación desde el hosting."

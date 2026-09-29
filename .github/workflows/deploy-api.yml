@@ -2,12 +2,12 @@ name: Deploy API
 
 on:
   push:
-    branches: [develop, main, master]
+    branches: [develop, production, main, master]
     paths:
       - 'api/**'
       - '.github/workflows/deploy-api.yml'
   pull_request:
-    branches: [develop, main, master]
+    branches: [develop, production, main, master]
     paths:
       - 'api/**'
       - '.github/workflows/deploy-api.yml'
@@ -43,13 +43,33 @@ jobs:
           cp package.json package-lock.json deploy-package/
           zip -qr node_modules.zip node_modules/
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: api-deploy
+          path: |
+            api/deploy-package/
+            api/node_modules.zip
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_name == 'develop' && 'develop' || 'production' }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: api-deploy
+          path: api/
+
       - name: Deploy to FTP and restart Node app
-        if: github.event_name == 'push'
         env:
-          FTP_HOST: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_HOST_PROD || secrets.FTP_HOST_DEV }}
-          FTP_USERNAME: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_USERNAME_PROD || secrets.FTP_USERNAME_DEV }}
-          FTP_PASSWORD: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PROD || secrets.FTP_PASSWORD_DEV }}
-          FTP_REMOTE_DIR: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_API_PROD || vars.FTP_REMOTE_DIR_API_DEV }}
+          FTP_HOST: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_HOST_PRD || secrets.FTP_HOST_DEV }}
+          FTP_USERNAME: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_USERNAME_PRD || secrets.FTP_USERNAME_DEV }}
+          FTP_PASSWORD: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PRD || secrets.FTP_PASSWORD_DEV }}
+          FTP_REMOTE_DIR: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_API_PRD || vars.FTP_REMOTE_DIR_API_DEV }}
         run: |
           FTP_REMOTE_DIR="${FTP_REMOTE_DIR%/}"
           sudo apt-get update -qq

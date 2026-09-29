@@ -130,17 +130,20 @@ La app web queda disponible normalmente en:
 
 ## Despliegue CI/CD
 
-GitHub Actions valida el build en pull requests y despliega al hacer push a `develop`, `main` o `master`. `develop` usa el entorno de desarrollo; `main` y `master` usan producción. Los despliegues de web y API son independientes.
+GitHub Actions valida el build en pull requests y despliega al hacer push a `develop`, `production`, `main` o `master`. Los jobs de publicación usan los GitHub Environments `develop` o `production`; `main` y `master` también apuntan a `production`. Los despliegues de web y API son independientes.
 
-Configura estos **Actions secrets** en el repositorio:
+En el Environment `develop`, configura estos **secrets** y **variables**:
 
-- `FTP_HOST_DEV`, `FTP_USERNAME_DEV`, `FTP_PASSWORD_DEV`
-- `FTP_HOST_PROD`, `FTP_USERNAME_PROD`, `FTP_PASSWORD_PROD`
+- Secrets: `FTP_HOST_DEV`, `FTP_USERNAME_DEV`, `FTP_PASSWORD_DEV`
+- Variables: `FTP_REMOTE_DIR_WEB_DEV`, `FTP_REMOTE_DIR_API_DEV`
 
-Configura estas **Actions variables** con las rutas FTP completas de cada aplicación y las URLs de la API:
+En el Environment `production`, configura:
 
-- `FTP_REMOTE_DIR_WEB_DEV`, `FTP_REMOTE_DIR_WEB_PROD`
-- `FTP_REMOTE_DIR_API_DEV`, `FTP_REMOTE_DIR_API_PROD`
+- Secrets: `FTP_HOST_PRD`, `FTP_USERNAME_PRD`, `FTP_PASSWORD_PRD`
+- Variables: `FTP_REMOTE_DIR_WEB_PRD`, `FTP_REMOTE_DIR_API_PRD`
+
+Configura a nivel de repositorio las variables que necesita el build web:
+
 - `VITE_API_URL_DEV`, `VITE_API_URL_PROD`
 - Opcionales: `VITE_PBKDF2_ITERATIONS`, `VITE_TRANSPORT_KEY_SALT`
 

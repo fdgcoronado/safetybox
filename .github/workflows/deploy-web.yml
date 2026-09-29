@@ -2,12 +2,12 @@ name: Deploy Web
 
 on:
   push:
-    branches: [develop, main, master]
+    branches: [develop, production, main, master]
     paths:
       - 'web/**'
       - '.github/workflows/deploy-web.yml'
   pull_request:
-    branches: [develop, main, master]
+    branches: [develop, production, main, master]
     paths:
       - 'web/**'
       - '.github/workflows/deploy-web.yml'
@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VITE_API_URL: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && vars.VITE_API_URL_PROD || vars.VITE_API_URL_DEV }}
+      VITE_API_URL: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && vars.VITE_API_URL_PROD || vars.VITE_API_URL_DEV }}
       VITE_PBKDF2_ITERATIONS: ${{ vars.VITE_PBKDF2_ITERATIONS || '250000' }}
       VITE_TRANSPORT_KEY_SALT: ${{ vars.VITE_TRANSPORT_KEY_SALT || 'safetybox-json-transport' }}
 
@@ -37,16 +37,34 @@ jobs:
         run: npm run build
         working-directory: web
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: web/dist/
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_name == 'develop' && 'develop' || 'production' }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: web/dist/
+
       - name: Deploy to FTP
-        if: github.event_name == 'push'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_HOST_PROD || secrets.FTP_HOST_DEV }}
-          username: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_USERNAME_PROD || secrets.FTP_USERNAME_DEV }}
-          password: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PROD || secrets.FTP_PASSWORD_DEV }}
+          server: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_HOST_PRD || secrets.FTP_HOST_DEV }}
+          username: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_USERNAME_PRD || secrets.FTP_USERNAME_DEV }}
+          password: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PRD || secrets.FTP_PASSWORD_DEV }}
           protocol: ftp
           port: 21
           local-dir: web/dist/
-          server-dir: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_WEB_PROD || vars.FTP_REMOTE_DIR_WEB_DEV }}
+          server-dir: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_WEB_PRD || vars.FTP_REMOTE_DIR_WEB_DEV }}
           exclude: |
             **/.htaccess

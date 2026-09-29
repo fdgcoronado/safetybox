@@ -192,9 +192,11 @@ input:focus {
   align-items: flex-start;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
-  background: rgba(130, 205, 187, 0.06);
+  background: rgba(8, 12, 13, 0.26);
+  backdrop-filter: blur(4px);
+  color: var(--white);
 }
 
 .security-icon {
@@ -203,14 +205,14 @@ input:focus {
   width: 28px;
   height: 28px;
   border-radius: 9px;
-  background: rgba(79, 140, 122, 0.12);
+  background: rgba(255, 255, 255, 0.1);
   font-size: 16px;
 }
 
 .security-point strong {
   display: block;
   margin-bottom: 3px;
-  color: var(--ink);
+  color: #ffffff;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -218,7 +220,7 @@ input:focus {
 
 .security-point small {
   display: block;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 11px;
   line-height: 1.45;
 }
@@ -254,12 +256,54 @@ input:focus {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(180deg, rgba(9, 11, 15, 0.12), rgba(9, 11, 15, 0.62)),
+    linear-gradient(180deg, rgba(5, 9, 11, 0.22), rgba(5, 9, 11, 0.42)),
     url("https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80");
   background-size: cover;
   background-position: center;
   transform: scale(1.08);
-  filter: saturate(0.65) contrast(1.1);
+  filter: saturate(0.8) contrast(1.08) brightness(0.94);
+}
+
+.vault-overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 42px 32px 42px;
+  color: #ffffff;
+}
+
+.vault-badge {
+  margin: 0 0 10px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.vault-overlay h2 {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--display);
+  font-size: clamp(26px, 2.8vw, 46px);
+  line-height: 0.94;
+  letter-spacing: -0.06em;
+}
+
+.auth-aside .vault-illustration::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 12, 13, 0.14), rgba(8, 12, 13, 0.28));
+  z-index: 0;
+}
+
+.auth-aside .vault-illustration > .vault-overlay {
+  position: relative;
+  z-index: 1;
 }
 
 .topbar {

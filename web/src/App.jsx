@@ -481,6 +481,33 @@ function App() {
         <aside className="auth-aside">
           <div className="vault-illustration" aria-label="Bóveda bancaria">
             <div className="vault-image" />
+            <div className="vault-overlay">
+              <p className="vault-badge">SEGURIDAD</p>
+              <h2>Protegemos cada acceso.</h2>
+              <div className="security-points" aria-label="Puntos clave de seguridad">
+                <div className="security-point">
+                  <span className="security-icon">🔒</span>
+                  <div>
+                    <strong>Credenciales cifradas</strong>
+                    <small>Las contraseñas se guardan encriptadas antes de almacenarse.</small>
+                  </div>
+                </div>
+                <div className="security-point">
+                  <span className="security-icon">🛡️</span>
+                  <div>
+                    <strong>Datos protegidos en tránsito</strong>
+                    <small>El tráfico del cliente al servidor viaja cifrado y protegido.</small>
+                  </div>
+                </div>
+                <div className="security-point">
+                  <span className="security-icon">🗝️</span>
+                  <div>
+                    <strong>Llave maestra local</strong>
+                    <small>La clave nunca se guarda ni se almacena en el navegador ni en la base de datos.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </aside>
       </main>
@@ -540,29 +567,6 @@ function App() {
                   : "Crear bóveda"}
             </button>
           </form>
-          <div className="security-points" aria-label="Puntos clave de seguridad">
-            <div className="security-point">
-              <span className="security-icon">🔒</span>
-              <div>
-                <strong>Credenciales cifradas</strong>
-                <small>Las contraseñas se guardan encriptadas antes de almacenarse.</small>
-              </div>
-            </div>
-            <div className="security-point">
-              <span className="security-icon">🛡️</span>
-              <div>
-                <strong>Datos protegidos en tránsito</strong>
-                <small>El tráfico del cliente al servidor viaja cifrado y protegido.</small>
-              </div>
-            </div>
-            <div className="security-point">
-              <span className="security-icon">🗝️</span>
-              <div>
-                <strong>Llave maestra local</strong>
-                <small>La clave nunca se guarda ni se almacena en el navegador ni en la base de datos.</small>
-              </div>
-            </div>
-          </div>
           <p className="security-note">
             <span aria-hidden="true">◎</span> Cifrado AES-GCM de 256 bits en tu
             navegador
@@ -571,6 +575,33 @@ function App() {
         <aside className="auth-aside">
           <div className="vault-illustration" aria-label="Bóveda bancaria">
             <div className="vault-image" />
+            <div className="vault-overlay">
+              <p className="vault-badge">SEGURIDAD</p>
+              <h2>Protegemos cada acceso.</h2>
+              <div className="security-points" aria-label="Puntos clave de seguridad">
+                <div className="security-point">
+                  <span className="security-icon">🔒</span>
+                  <div>
+                    <strong>Credenciales cifradas</strong>
+                    <small>Las contraseñas se guardan encriptadas antes de almacenarse.</small>
+                  </div>
+                </div>
+                <div className="security-point">
+                  <span className="security-icon">🛡️</span>
+                  <div>
+                    <strong>Datos protegidos en tránsito</strong>
+                    <small>El tráfico del cliente al servidor viaja cifrado y protegido.</small>
+                  </div>
+                </div>
+                <div className="security-point">
+                  <span className="security-icon">🗝️</span>
+                  <div>
+                    <strong>Llave maestra local</strong>
+                    <small>La clave nunca se guarda ni se almacena en el navegador ni en la base de datos.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </aside>
       </main>

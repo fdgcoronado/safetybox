@@ -45,6 +45,15 @@ SafetyBox está pensado para que:
 - los datos viajen cifrados entre navegador y backend
 - el backend no exponga mensajes internos sensibles
 
+## Ventajas
+
+- Control total del usuario sobre su propia clave maestra
+- Cifrado de credenciales en el navegador antes de almacenarse
+- Datos protegidos en tránsito entre cliente y servidor
+- Bóveda privada con acceso rápido a credenciales favoritas
+- UX clara y moderna para gestionar credenciales con seguridad
+- Arquitectura preparada para crecimiento con JWT, MySQL y TypeORM
+
 ## Requerimientos
 
 - Node.js 18+

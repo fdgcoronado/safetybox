@@ -57,7 +57,10 @@ export class VaultEntryService {
 
   private async decryptPayload(record: VaultRecord) {
     const key = await this.getPersistKey();
-    const iv = Buffer.from(record.iv ?? record.initializationVector ?? "", "base64");
+    const iv = Buffer.from(
+      record.iv ?? record.initializationVector ?? "",
+      "base64",
+    );
     const ciphertext = Buffer.from(record.encryptedPayload, "base64");
     const plaintext = await crypto.subtle.decrypt(
       { name: "AES-GCM", iv },

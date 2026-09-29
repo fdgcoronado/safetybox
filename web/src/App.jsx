@@ -5,8 +5,7 @@ import "./App.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const PBKDF2_ITERATIONS = Number(import.meta.env.VITE_PBKDF2_ITERATIONS);
-const TRANSPORT_KEY_SALT =
-  import.meta.env.VITE_TRANSPORT_KEY_SALT;
+const TRANSPORT_KEY_SALT = import.meta.env.VITE_TRANSPORT_KEY_SALT;
 
 const encode = (value) => btoa(String.fromCharCode(...new Uint8Array(value)));
 const decode = (value) =>
@@ -109,7 +108,13 @@ const decryptVault = async (vault, password) => {
   return JSON.parse(new TextDecoder().decode(data));
 };
 
-const initialEntry = { name: "", username: "", password: "", url: "", favorite: false };
+const initialEntry = {
+  name: "",
+  username: "",
+  password: "",
+  url: "",
+  favorite: false,
+};
 
 function App() {
   const [session, setSession] = useState(null);
@@ -171,9 +176,10 @@ function App() {
     const requestOptions = { ...options };
 
     if (requestOptions.body && token) {
-      const parsedBody = typeof requestOptions.body === "string"
-        ? JSON.parse(requestOptions.body)
-        : requestOptions.body;
+      const parsedBody =
+        typeof requestOptions.body === "string"
+          ? JSON.parse(requestOptions.body)
+          : requestOptions.body;
 
       requestOptions.body = JSON.stringify(
         await encryptTransportPayload(parsedBody, token),
@@ -348,7 +354,9 @@ function App() {
 
     setBusy(true);
     try {
-      await saveEntries(entries.filter((entry) => entry.id !== deleteTarget.id));
+      await saveEntries(
+        entries.filter((entry) => entry.id !== deleteTarget.id),
+      );
     } finally {
       setBusy(false);
       setDeleteTarget(null);
@@ -374,9 +382,7 @@ function App() {
 
   const favoriteEntries = entries.filter((entry) => entry.favorite);
   const visibleEntries =
-    favoriteFilter === "favorites"
-      ? favoriteEntries
-      : entries;
+    favoriteFilter === "favorites" ? favoriteEntries : entries;
 
   const filteredEntries = visibleEntries.filter((entry) =>
     `${entry.name} ${entry.username} ${entry.url}`
@@ -397,17 +403,25 @@ function App() {
             Inicia sesión con tu cuenta de SafetyBox o crea una nueva con JWT.
           </p>
 
-          <div className="auth-mode-toggle" role="tablist" aria-label="Modo de autenticación">
+          <div
+            className="auth-mode-toggle"
+            role="tablist"
+            aria-label="Modo de autenticación"
+          >
             <button
               type="button"
-              className={authMode === "login" ? "tab-button active" : "tab-button"}
+              className={
+                authMode === "login" ? "tab-button active" : "tab-button"
+              }
               onClick={() => setAuthMode("login")}
             >
               Iniciar sesión
             </button>
             <button
               type="button"
-              className={authMode === "register" ? "tab-button active" : "tab-button"}
+              className={
+                authMode === "register" ? "tab-button active" : "tab-button"
+              }
               onClick={() => setAuthMode("register")}
             >
               Registrarme
@@ -433,7 +447,9 @@ function App() {
               value={authPassword}
               onChange={(event) => setAuthPassword(event.target.value)}
               placeholder="Tu contraseña"
-              autoComplete={authMode === "login" ? "current-password" : "new-password"}
+              autoComplete={
+                authMode === "login" ? "current-password" : "new-password"
+              }
               required
             />
 
@@ -443,7 +459,11 @@ function App() {
               </p>
             )}
 
-            <button className="primary-button" type="submit" disabled={authBusy}>
+            <button
+              className="primary-button"
+              type="submit"
+              disabled={authBusy}
+            >
               {authBusy
                 ? authMode === "login"
                   ? "Entrando..."
@@ -493,7 +513,9 @@ function App() {
             />
             {!hasVault && (
               <>
-                <label htmlFor="confirm-password">Repite la llave maestra</label>
+                <label htmlFor="confirm-password">
+                  Repite la llave maestra
+                </label>
                 <input
                   id="confirm-password"
                   type="password"
@@ -518,6 +540,29 @@ function App() {
                   : "Crear bóveda"}
             </button>
           </form>
+          <div className="security-points" aria-label="Puntos clave de seguridad">
+            <div className="security-point">
+              <span className="security-icon">🔒</span>
+              <div>
+                <strong>Credenciales cifradas</strong>
+                <small>Las contraseñas se guardan encriptadas antes de almacenarse.</small>
+              </div>
+            </div>
+            <div className="security-point">
+              <span className="security-icon">🛡️</span>
+              <div>
+                <strong>Datos protegidos en tránsito</strong>
+                <small>El tráfico del cliente al servidor viaja cifrado y protegido.</small>
+              </div>
+            </div>
+            <div className="security-point">
+              <span className="security-icon">🗝️</span>
+              <div>
+                <strong>Llave maestra local</strong>
+                <small>La clave nunca se guarda ni se almacena en el navegador ni en la base de datos.</small>
+              </div>
+            </div>
+          </div>
           <p className="security-note">
             <span aria-hidden="true">◎</span> Cifrado AES-GCM de 256 bits en tu
             navegador
@@ -543,7 +588,11 @@ function App() {
       >
         <Toolbar disableGutters className="topbar-toolbar">
           <div className="wordmark">
-            <img src={logoUrl} alt="SafetyBox logo" className="brand-mark small" />
+            <img
+              src={logoUrl}
+              alt="SafetyBox logo"
+              className="brand-mark small"
+            />
             SAFETYBOX
           </div>
           <div className="topbar-actions">
@@ -573,14 +622,19 @@ function App() {
           <p className="sidebar-label">TU ESPACIO</p>
           <button
             type="button"
-            className={favoriteFilter === "all" ? "nav-item active" : "nav-item"}
+            className={
+              favoriteFilter === "all" ? "nav-item active" : "nav-item"
+            }
             onClick={() => setFavoriteFilter("all")}
           >
-            <span>▦</span> Todas las credenciales <strong>{entries.length}</strong>
+            <span>▦</span> Todas las credenciales{" "}
+            <strong>{entries.length}</strong>
           </button>
           <button
             type="button"
-            className={favoriteFilter === "favorites" ? "nav-item active" : "nav-item"}
+            className={
+              favoriteFilter === "favorites" ? "nav-item active" : "nav-item"
+            }
             onClick={() => setFavoriteFilter("favorites")}
           >
             <span>☆</span> Favoritas <strong>{favoriteEntries.length}</strong>
@@ -593,7 +647,8 @@ function App() {
                   key={entry.id}
                   type="button"
                   className={
-                    favoriteFilter === "favorites" && filteredEntries.some((item) => item.id === entry.id)
+                    favoriteFilter === "favorites" &&
+                    filteredEntries.some((item) => item.id === entry.id)
                       ? "favorite-entry selected"
                       : "favorite-entry"
                   }
@@ -631,6 +686,22 @@ function App() {
               + Añadir credencial
             </button>
           </div>
+
+          <div className="security-banner" aria-label="Puntos clave de seguridad">
+            <div className="security-banner-item">
+              <span>🔒</span>
+              <p>Las credenciales se guardan cifradas.</p>
+            </div>
+            <div className="security-banner-item">
+              <span>🛡️</span>
+              <p>Los datos viajan encriptados del cliente al servidor.</p>
+            </div>
+            <div className="security-banner-item">
+              <span>🗝️</span>
+              <p>La llave maestra nunca se almacena.</p>
+            </div>
+          </div>
+
           <div className="toolbar">
             <label className="search-box">
               <span aria-hidden="true">⌕</span>
@@ -683,10 +754,22 @@ function App() {
                     </div>
                     <button
                       type="button"
-                      className={entry.favorite ? "favorite-button active" : "favorite-button"}
+                      className={
+                        entry.favorite
+                          ? "favorite-button active"
+                          : "favorite-button"
+                      }
                       onClick={() => toggleFavorite(entry.id)}
-                      aria-label={entry.favorite ? `Quitar ${entry.name} de favoritas` : `Marcar ${entry.name} como favorita`}
-                      title={entry.favorite ? "Quitar de favoritas" : "Marcar como favorita"}
+                      aria-label={
+                        entry.favorite
+                          ? `Quitar ${entry.name} de favoritas`
+                          : `Marcar ${entry.name} como favorita`
+                      }
+                      title={
+                        entry.favorite
+                          ? "Quitar de favoritas"
+                          : "Marcar como favorita"
+                      }
                     >
                       ★
                     </button>
@@ -727,7 +810,12 @@ function App() {
                     {entry.url && (
                       <a
                         className="entry-url"
-                        href={entry.url.startsWith("http://") || entry.url.startsWith("https://") ? entry.url : `https://${entry.url}`}
+                        href={
+                          entry.url.startsWith("http://") ||
+                          entry.url.startsWith("https://")
+                            ? entry.url
+                            : `https://${entry.url}`
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         title={entry.url}
@@ -770,7 +858,8 @@ function App() {
               </button>
             </div>
             <p className="delete-warning">
-              Se eliminará <strong>{deleteTarget.name}</strong> y no podrás recuperarla después.
+              Se eliminará <strong>{deleteTarget.name}</strong> y no podrás
+              recuperarla después.
             </p>
             <div className="modal-actions">
               <button

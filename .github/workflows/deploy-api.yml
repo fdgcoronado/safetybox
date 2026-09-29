@@ -85,6 +85,16 @@ jobs:
             quit
           "
 
+          lftp -c "
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
+            set ftp:ssl-allow no;
+            set ftp:passive-mode on;
+            set net:max-retries 2;
+            set net:timeout 30;
+            put -O \"$FTP_REMOTE_DIR\" node_modules.zip;
+            quit
+          "
+
           NODE_MODULES_EXISTS=$(lftp -c "
             open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
             set ftp:ssl-allow no;
@@ -96,18 +106,8 @@ jobs:
           ")
 
           if [ -z "$NODE_MODULES_EXISTS" ]; then
-            echo "node_modules/ no existe en el hosting; subiendo node_modules.zip para instalación inicial."
-            lftp -c "
-              open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
-              set ftp:ssl-allow no;
-              set ftp:passive-mode on;
-              set net:max-retries 2;
-              set net:timeout 30;
-              put -O \"$FTP_REMOTE_DIR\" node_modules.zip;
-              quit
-            "
-            echo "::error::Extrae node_modules.zip dentro de la carpeta de la API en el hosting y vuelve a ejecutar el workflow."
-            exit 1
+            echo "::warning::node_modules.zip quedó en el servidor. Extraelo manualmente dentro de la carpeta de la API y reinicia la aplicación desde el hosting."
+            exit 0
           fi
 
           printf 'restart\n' > restart.txt

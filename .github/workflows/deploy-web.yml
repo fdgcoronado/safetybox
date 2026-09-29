@@ -68,3 +68,24 @@ jobs:
           server-dir: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_WEB_PRD || vars.FTP_REMOTE_DIR_WEB_DEV }}
           exclude: |
             **/.htaccess
+            api/
+            api/**
+
+      - name: Ensure API directory exists
+        env:
+          FTP_HOST: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_HOST_PRD || secrets.FTP_HOST_DEV }}
+          FTP_USERNAME: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_USERNAME_PRD || secrets.FTP_USERNAME_DEV }}
+          FTP_PASSWORD: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PRD || secrets.FTP_PASSWORD_DEV }}
+          FTP_REMOTE_DIR_API: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_API_PRD || vars.FTP_REMOTE_DIR_API_DEV }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+          lftp -c "
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
+            set ftp:ssl-allow no;
+            set ftp:passive-mode on;
+            set net:max-retries 2;
+            set net:timeout 30;
+            mkdir -p \"${FTP_REMOTE_DIR_API%/}\";
+            quit
+          "

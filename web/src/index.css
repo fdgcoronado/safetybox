@@ -1,16 +1,16 @@
 :root {
-  --paper: #f4f1e9;
-  --white: #fffdf8;
-  --ink: #171a16;
-  --muted: #73776d;
-  --line: #d9d7cc;
-  --coral: #ef624f;
-  --lime: #d1f64f;
-  --lime-soft: #e8f8ad;
-  --lime-dark: #759900;
-  --display: Georgia, 'Times New Roman', serif;
-  --sans: 'Trebuchet MS', 'Segoe UI', sans-serif;
-  --mono: 'Courier New', monospace;
+  --paper: #f5f3ee;
+  --white: #ffffff;
+  --ink: #1b2323;
+  --muted: #666d6b;
+  --line: rgba(27, 35, 35, 0.1);
+  --coral: #d96b50;
+  --lime: #cfe86d;
+  --lime-soft: rgba(207, 232, 109, 0.16);
+  --lime-dark: #7ea216;
+  --display: 'Segoe UI', 'Inter', sans-serif;
+  --sans: 'Segoe UI', 'Inter', sans-serif;
+  --mono: 'SFMono-Regular', 'Consolas', monospace;
   font: 16px/1.45 var(--sans);
   color: var(--ink);
   background: var(--paper);
@@ -32,6 +32,7 @@ html {
 body {
   min-width: 320px;
   margin: 0;
+  background: transparent;
 }
 
 button,

@@ -1,28 +1,28 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
-import { Request } from 'express'
-import { AuthService } from './auth.service'
-import { CredentialsDto } from './dto/auth.dto'
-import { AuthenticatedUser, JwtAuthGuard } from './jwt-auth.guard'
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Request } from "express";
+import { AuthService } from "./auth.service";
+import { CredentialsDto } from "./dto/auth.dto";
+import { AuthenticatedUser, JwtAuthGuard } from "./jwt-auth.guard";
 
-type AuthenticatedRequest = Request & { user: AuthenticatedUser }
+type AuthenticatedRequest = Request & { user: AuthenticatedUser };
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
+  @Post("register")
   register(@Body() credentials: CredentialsDto) {
-    return this.authService.register(credentials.email, credentials.password)
+    return this.authService.register(credentials.email, credentials.password);
   }
 
-  @Post('login')
+  @Post("login")
   login(@Body() credentials: CredentialsDto) {
-    return this.authService.login(credentials.email, credentials.password)
+    return this.authService.login(credentials.email, credentials.password);
   }
 
-  @Get('me')
+  @Get("me")
   @UseGuards(JwtAuthGuard)
   me(@Req() request: AuthenticatedRequest) {
-    return this.authService.getProfile(request.user.sub)
+    return this.authService.getProfile(request.user.sub);
   }
 }

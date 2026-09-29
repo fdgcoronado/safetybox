@@ -1,7 +1,7 @@
-import { ConflictException, Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { User } from './user.entity'
+import { ConflictException, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { User } from "./user.entity";
 
 @Injectable()
 export class UsersService {
@@ -11,20 +11,20 @@ export class UsersService {
   ) {}
 
   async create(email: string, passwordHash: string) {
-    const existingUser = await this.findByEmail(email)
+    const existingUser = await this.findByEmail(email);
     if (existingUser) {
-      throw new ConflictException('Ya existe una cuenta con ese correo')
+      throw new ConflictException("Ya existe una cuenta con ese correo");
     }
 
-    const user = this.usersRepository.create({ email, passwordHash })
-    return this.usersRepository.save(user)
+    const user = this.usersRepository.create({ email, passwordHash });
+    return this.usersRepository.save(user);
   }
 
   findByEmail(email: string) {
-    return this.usersRepository.findOne({ where: { email } })
+    return this.usersRepository.findOne({ where: { email } });
   }
 
   findById(id: string) {
-    return this.usersRepository.findOne({ where: { id } })
+    return this.usersRepository.findOne({ where: { id } });
   }
 }

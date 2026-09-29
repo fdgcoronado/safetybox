@@ -4,13 +4,13 @@ on:
   push:
     branches: [develop, production, main, master]
     paths:
-      - 'api/**'
-      - '.github/workflows/deploy-api.yml'
+      - "api/**"
+      - ".github/workflows/deploy-api.yml"
   pull_request:
     branches: [develop, production, main, master]
     paths:
-      - 'api/**'
-      - '.github/workflows/deploy-api.yml'
+      - "api/**"
+      - ".github/workflows/deploy-api.yml"
 
 defaults:
   run:

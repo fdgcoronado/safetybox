@@ -128,6 +128,24 @@ La app web queda disponible normalmente en:
 
 - http://localhost:5173
 
+## Despliegue CI/CD
+
+GitHub Actions valida el build en pull requests y despliega al hacer push a `develop`, `main` o `master`. `develop` usa el entorno de desarrollo; `main` y `master` usan producción. Los despliegues de web y API son independientes.
+
+Configura estos **Actions secrets** en el repositorio:
+
+- `FTP_HOST_DEV`, `FTP_USERNAME_DEV`, `FTP_PASSWORD_DEV`
+- `FTP_HOST_PROD`, `FTP_USERNAME_PROD`, `FTP_PASSWORD_PROD`
+
+Configura estas **Actions variables** con las rutas FTP completas de cada aplicación y las URLs de la API:
+
+- `FTP_REMOTE_DIR_WEB_DEV`, `FTP_REMOTE_DIR_WEB_PROD`
+- `FTP_REMOTE_DIR_API_DEV`, `FTP_REMOTE_DIR_API_PROD`
+- `VITE_API_URL_DEV`, `VITE_API_URL_PROD`
+- Opcionales: `VITE_PBKDF2_ITERATIONS`, `VITE_TRANSPORT_KEY_SALT`
+
+El workflow web publica únicamente `web/dist/`. El workflow API publica `api/dist/` y requiere hosting compatible con Node.js, con el archivo de inicio configurado como `dist/main.js` y las variables de entorno de la API definidas en el hosting. En la primera publicación, si el servidor todavía no tiene `node_modules`, el workflow sube `node_modules.zip`; extrae ese archivo en la carpeta de la API y vuelve a ejecutar el workflow. Las siguientes publicaciones envían `tmp/restart.txt` para solicitar el reinicio de la aplicación.
+
 ## Endpoints principales
 
 ### Autenticación

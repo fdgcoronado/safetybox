@@ -1,0 +1,52 @@
+name: Deploy Web
+
+on:
+  push:
+    branches: [develop, main, master]
+    paths:
+      - 'web/**'
+      - '.github/workflows/deploy-web.yml'
+  pull_request:
+    branches: [develop, main, master]
+    paths:
+      - 'web/**'
+      - '.github/workflows/deploy-web.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      VITE_API_URL: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && vars.VITE_API_URL_PROD || vars.VITE_API_URL_DEV }}
+      VITE_PBKDF2_ITERATIONS: ${{ vars.VITE_PBKDF2_ITERATIONS || '250000' }}
+      VITE_TRANSPORT_KEY_SALT: ${{ vars.VITE_TRANSPORT_KEY_SALT || 'safetybox-json-transport' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: web
+
+      - name: Build
+        run: npm run build
+        working-directory: web
+
+      - name: Deploy to FTP
+        if: github.event_name == 'push'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_HOST_PROD || secrets.FTP_HOST_DEV }}
+          username: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_USERNAME_PROD || secrets.FTP_USERNAME_DEV }}
+          password: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PROD || secrets.FTP_PASSWORD_DEV }}
+          protocol: ftp
+          port: 21
+          local-dir: web/dist/
+          server-dir: ${{ (github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_WEB_PROD || vars.FTP_REMOTE_DIR_WEB_DEV }}
+          exclude: |
+            **/.htaccess

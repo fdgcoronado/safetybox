@@ -154,7 +154,7 @@ Configura a nivel de repositorio las variables que necesita el build web:
 - `VITE_API_URL_DEV`, `VITE_API_URL_PROD`
 - Opcionales: `VITE_PBKDF2_ITERATIONS`, `VITE_TRANSPORT_KEY_SALT`
 
-El workflow web publica únicamente `web/dist/` y excluye `api/` del publish y de los borrados remotos. Además, se asegura de crear de nuevo la carpeta API si no existe. El workflow API publica `api/dist/` y requiere hosting compatible con Node.js, con el archivo de inicio configurado como `dist/main.js` y las variables de entorno de la API definidas en el hosting. El workflow crea y sube `node_modules.zip` por separado, nunca transfiere la carpeta `node_modules/`. Si esta carpeta todavía no existe en el servidor, extrae el ZIP manualmente dentro de la carpeta de la API y reinicia la aplicación desde el hosting. Cuando ya existe, el workflow envía `tmp/restart.txt` para solicitar el reinicio.
+El workflow web publica únicamente `web/dist/` y excluye `api/` y su contenido del publish y de los borrados remotos, preservando esa carpeta. El workflow API publica `api/dist/` y requiere hosting compatible con Node.js, con el archivo de inicio configurado como `dist/main.js` y las variables de entorno de la API definidas en el hosting. El workflow crea y sube `node_modules.zip` por separado, nunca transfiere la carpeta `node_modules/`. Si esta carpeta todavía no existe en el servidor, extrae el ZIP manualmente dentro de la carpeta de la API y reinicia la aplicación desde el hosting. Cuando ya existe, el workflow envía `tmp/restart.txt` para solicitar el reinicio.
 
 ## Endpoints principales
 

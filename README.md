@@ -142,7 +142,7 @@ En el Environment `production`, configura:
 - Secrets: `FTP_HOST_PRD`, `FTP_USERNAME_PRD`, `FTP_PASSWORD_PRD`
 - Variables: `FTP_REMOTE_DIR_WEB_PRD`, `FTP_REMOTE_DIR_API_PRD`
 
-Los directorios remotos son relativos a la raíz visible para cada usuario FTP. En `develop`, el usuario inicia directamente en `/home/<user>/public_html/safetybox-dev`; configura `FTP_REMOTE_DIR_WEB_DEV` como `/` y `FTP_REMOTE_DIR_API_DEV` como `/api`. Así, web queda en `/home/<user>/public_html/safetybox-dev` y la API en `/home/<user>/public_html/safetybox-dev/api`. En `production`, usa `/` y `/api` si el usuario FTP también inicia en la raíz web de producción; si su raíz inicial es distinta, ajusta ambas variables respecto a esa raíz.
+Las rutas `FTP_REMOTE_DIR_*` son **Actions variables del Environment**, no secrets. Los directorios son relativos a la raíz visible para cada usuario FTP. En `develop`, el usuario inicia directamente en `/home/<user>/public_html/safetybox-dev`; configura `FTP_REMOTE_DIR_WEB_DEV` como `/` y `FTP_REMOTE_DIR_API_DEV` como `api`. Así, web queda en `/home/<user>/public_html/safetybox-dev` y la API en `/home/<user>/public_html/safetybox-dev/api`. En `production`, usa `/` y `api` si el usuario FTP también inicia en la raíz web de producción; si su raíz inicial es distinta, ajusta ambas variables respecto a esa raíz.
 
 El resultado del deploy será:
 

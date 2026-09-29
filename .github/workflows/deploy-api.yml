@@ -71,7 +71,13 @@ jobs:
           FTP_PASSWORD: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PRD || secrets.FTP_PASSWORD_DEV }}
           FTP_REMOTE_DIR: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_API_PRD || vars.FTP_REMOTE_DIR_API_DEV }}
         run: |
+          FTP_REMOTE_DIR="${FTP_REMOTE_DIR:-/api}"
           FTP_REMOTE_DIR="${FTP_REMOTE_DIR%/}"
+          if [ -z "$FTP_REMOTE_DIR" ] || [ "$FTP_REMOTE_DIR" = "/" ]; then
+            echo "::error::Refusing to deploy API to the FTP root. Set FTP_REMOTE_DIR_API_DEV/PRD to /api."
+            exit 1
+          fi
+          echo "API FTP target: $FTP_REMOTE_DIR"
           sudo apt-get update -qq
           sudo apt-get install -y -qq lftp
 

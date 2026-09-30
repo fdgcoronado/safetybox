@@ -7,6 +7,7 @@ import { FileLoggerService } from "./common/logging/file-logger.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix("api");
   const fileLogger = app.get(FileLoggerService);
   app.useLogger(fileLogger);
   app.use((_: Request, res: Response, next: NextFunction) => {

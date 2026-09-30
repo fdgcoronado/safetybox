@@ -122,7 +122,7 @@ npm run dev
 La API queda disponible en:
 
 - http://localhost:3000
-- http://localhost:3000/health
+- http://localhost:3000/api/health
 
 La app web queda disponible normalmente en:
 
@@ -160,18 +160,18 @@ El workflow web publica únicamente `web/dist/` y excluye `api/` y su contenido 
 
 ### Autenticación
 
-- `POST /auth/register`
-- `POST /auth/login`
-- `GET /auth/me`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
 
 ### Bóveda
 
-- `GET /vault`
-- `POST /vault`
-- `GET /vault/entries`
-- `PUT /vault/entries`
-- `DELETE /vault/entries`
-- `DELETE /vault`
+- `GET /api/vault`
+- `POST /api/vault`
+- `GET /api/vault/entries`
+- `PUT /api/vault/entries`
+- `DELETE /api/vault/entries`
+- `DELETE /api/vault`
 
 ## Estado actual
 

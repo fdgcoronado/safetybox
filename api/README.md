@@ -8,7 +8,7 @@ Backend NestJS con TypeORM y MySQL.
 2. Levanta MySQL con `docker compose up -d mysql`.
 3. Instala dependencias con `npm install`.
 4. Arranca NestJS con `npm run start:dev`.
-5. Comprueba `http://localhost:3000/health`.
+5. Comprueba `http://localhost:3000/api/health`.
 
 `JWT_SECRET` debe ser una cadena larga y aleatoria. No la subas al repositorio.
 
@@ -32,9 +32,9 @@ Verifica que `DB_DATABASE` en `.env` tenga el mismo valor. Al usar `docker compo
 
 ## Autenticación
 
-- `POST /auth/register` crea una cuenta con `{ "email": "...", "password": "..." }`.
-- `POST /auth/login` devuelve `accessToken` y los datos públicos del usuario.
-- `GET /auth/me` requiere `Authorization: Bearer <accessToken>`.
+- `POST /api/auth/register` crea una cuenta con `{ "email": "...", "password": "..." }`.
+- `POST /api/auth/login` devuelve `accessToken` y los datos públicos del usuario.
+- `GET /api/auth/me` requiere `Authorization: Bearer <accessToken>`.
 
 Las contraseñas se guardan como hashes `bcrypt`; los JWT expiran en 15 minutos.
 

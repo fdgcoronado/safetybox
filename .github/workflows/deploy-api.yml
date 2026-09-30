@@ -1,0 +1,129 @@
+name: Deploy API
+
+on:
+  push:
+    branches: [develop, production, main, master]
+    paths:
+      - "api/**"
+      - ".github/workflows/deploy-api.yml"
+  pull_request:
+    branches: [develop, production, main, master]
+    paths:
+      - "api/**"
+      - ".github/workflows/deploy-api.yml"
+
+defaults:
+  run:
+    working-directory: api
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build API
+        run: npm run build
+
+      - name: Package API for FTP
+        run: |
+          npm prune --omit=dev
+          mkdir -p deploy-package/dist
+          cp -r dist/. deploy-package/dist/
+          cp package.json package-lock.json deploy-package/
+          zip -qr node_modules.zip node_modules/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: api-deploy
+          path: |
+            api/deploy-package/
+            api/node_modules.zip
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_name == 'develop' && 'develop' || 'production' }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: api-deploy
+          path: api/
+
+      - name: Deploy to FTP and restart Node app
+        env:
+          FTP_HOST: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_HOST_PRD || secrets.FTP_HOST_DEV }}
+          FTP_USERNAME: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_USERNAME_PRD || secrets.FTP_USERNAME_DEV }}
+          FTP_PASSWORD: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && secrets.FTP_PASSWORD_PRD || secrets.FTP_PASSWORD_DEV }}
+          FTP_REMOTE_DIR: ${{ (github.ref_name == 'production' || github.ref_name == 'main' || github.ref_name == 'master') && vars.FTP_REMOTE_DIR_API_PRD || vars.FTP_REMOTE_DIR_API_DEV }}
+        run: |
+          FTP_REMOTE_DIR="${FTP_REMOTE_DIR:-/api}"
+          FTP_REMOTE_DIR="${FTP_REMOTE_DIR%/}"
+          if [ -z "$FTP_REMOTE_DIR" ] || [ "$FTP_REMOTE_DIR" = "/" ]; then
+            echo "::error::Refusing to deploy API to the FTP root. Set FTP_REMOTE_DIR_API_DEV/PRD to /api."
+            exit 1
+          fi
+          echo "API FTP target: $FTP_REMOTE_DIR"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+
+          lftp -c "
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
+            set ftp:ssl-allow no;
+            set ftp:passive-mode on;
+            set net:max-retries 2;
+            set net:timeout 30;
+            mirror -R --verbose --delete --exclude-glob .env --exclude-glob .htaccess --exclude-glob node_modules --exclude-glob node_modules/** --exclude-glob logs --exclude-glob logs/** --exclude-glob tmp --exclude-glob tmp/** ./deploy-package/ \"$FTP_REMOTE_DIR/\";
+            quit
+          "
+
+          lftp -c "
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
+            set ftp:ssl-allow no;
+            set ftp:passive-mode on;
+            set net:max-retries 2;
+            set net:timeout 30;
+            put -O \"$FTP_REMOTE_DIR\" node_modules.zip;
+            quit
+          "
+
+          NODE_MODULES_EXISTS=$(lftp -c "
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
+            set ftp:ssl-allow no;
+            set net:max-retries 2;
+            set net:timeout 30;
+            cd \"$FTP_REMOTE_DIR\";
+            cls -1;
+            quit
+          " 2>/dev/null | grep -E '^node_modules/?$' || true)
+
+          if [ -z "$NODE_MODULES_EXISTS" ]; then
+            echo "::warning::node_modules.zip quedó en el servidor. Extraelo manualmente dentro de la carpeta de la API y reinicia la aplicación desde el hosting."
+            exit 0
+          fi
+
+          printf 'restart\n' > restart.txt
+          lftp -c "
+            open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST;
+            set ftp:ssl-allow no;
+            set ftp:passive-mode on;
+            set net:max-retries 2;
+            set net:timeout 30;
+            mkdir -p \"$FTP_REMOTE_DIR/tmp\";
+            put -O \"$FTP_REMOTE_DIR/tmp\" restart.txt;
+            quit
+          "
